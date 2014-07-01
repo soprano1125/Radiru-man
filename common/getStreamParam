@@ -1,0 +1,60 @@
+#!/usr/bin/perl --
+
+use strict;
+use Config::Simple;
+use File::Spec;
+use LWP::UserAgent;
+use XML::Simple;
+
+use Data::Dumper;
+
+if (@ARGV != 2){
+	print "usage: " . __FILE__ . " area band\n";
+	exit 1;
+}
+
+my ($ua, $res, $cfg, $data);
+
+my $area = $ARGV[0];
+my $band = $ARGV[1];
+
+$area =~ tr/A-Z/a-z/;
+$band =~ tr/A-Z/a-z/;
+
+my $home_path = File::Spec->rel2abs();
+$home_path =~ s/__FILE__//g;
+
+$cfg = new Config::Simple($home_path . '/radiru.ini')->vars();
+my $rtmp_pattern = $cfg->{'common.rtmp_pattern'};
+my $timeout = $cfg->{'common.http_timeout'};
+my $user_agent = $cfg->{'common.mozilla_agent'} .' (' . $cfg->{'common.user_agent'} . ') radiru-radiru/0.1';
+
+$ua = LWP::UserAgent->new;
+$ua->timeout($timeout);
+$ua->agent($user_agent);
+
+$res = $ua->get("http://www3.nhk.or.jp/netradio/app/config_pc.xml");
+if (!$res->is_success) {
+	print "Can't get Stream file.\n";
+	exit 1;
+}
+
+my $stream_url = "";
+my $stream_list = XML::Simple->new()->XMLin($res->content)->{"stream_url"}->{"data"};
+foreach my $stream_data (@{$stream_list}){
+	if($stream_data->{"area"} eq $area) {
+		$stream_url = $stream_data->{$band};
+		last;
+	}
+}
+
+if($stream_url eq "") {
+	print "Station is not Found.(area[$area], band[$band])\n";
+	exit 1;
+}
+
+my ($blank, $protocol, $server, $application, $playpath) = split($rtmp_pattern, $stream_url);
+print "$protocol://$server,$application,$playpath\n";
+
+exit 0;
+
