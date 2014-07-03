@@ -19,7 +19,7 @@ my $section = $ARGV[0];
 my $param_name = $ARGV[1];
 
 
-$cfg = new Config::Simple($home_path . '/radiru.ini')->vars();
+$cfg = new Config::Simple("$home_path/radiru.ini")->vars();
 
 print $cfg->{$section . '.' . $param_name} . "\n";
 exit 0;
