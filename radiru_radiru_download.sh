@@ -11,7 +11,7 @@ else
 	exit 1
 fi
 
-HOME_PATH=/home/ubuntu/Radiru-man
+HOME_PATH=/home/ubuntu/radiru-man
 PROG_PATH=$HOME_PATH/
 COMMON_PATH=$HOME_PATH/common
 TEMP_PATH=$HOME_PATH/share/temp

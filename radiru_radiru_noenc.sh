@@ -28,7 +28,7 @@ fi
 area=`echo $area | tr '[a-z]' '[A-Z]'`
 channel=`echo $channel | tr '[a-z]' '[A-Z]'`
 
-HOME_PATH=/home/ubuntu/Radiru-man
+HOME_PATH=/home/ubuntu/radiru-man
 PROG_PATH=$HOME_PATH
 TEMP_PATH=$HOME_PATH/share/temp
 COMMON_PATH=$PROG_PATH/common
